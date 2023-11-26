@@ -59,7 +59,7 @@ sourceClass = {"groundControl": data[data.GSM_source_name_ch1.str.contains("grou
 print("Downloading...")
 for source,samples in sourceClass.items():
     if samples.empty: continue
-    os.mkdir(path := os.path.join(args.outdir, source))
+    if not os.path.isdir(path := os.path.join(args.outdir, source)): os.mkdir(path)
     links = [link for files in samples.GSM_supplementary_file.unique() 
              for link in files.split(';') if re.search(f'{args.filetype}', link)]
     for i,link in enumerate(links): 
@@ -68,7 +68,3 @@ for source,samples in sourceClass.items():
 
 print("Done!")
 
-"""
-Para extraer la información tenemos que conseguir las columnas gMeanSignal y ProbeName del archivo suplementario
-De la tabla del GPL tenemos que obtener el SPOT_ID, de ahí se mapea al GENE_NAME y GO
-"""
