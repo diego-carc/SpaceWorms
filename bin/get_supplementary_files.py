@@ -51,7 +51,9 @@ if args.n_channels: print("Selectin channel counts"); data = data[data.GSM_chann
 print("Classifying sources...")
 sourceClass = {"groundControl": data[data.GSM_source_name_ch1.str.contains("ground control", case=False)],
                "sim1G": data[data.GSM_source_name_ch1.str.contains("1G", case=False)],
-               "spaceFlight": data[data.GSM_source_name_ch1.str.contains("microgravity", case=False) | data.GSM_source_name_ch1.str.contains("µG", case=False)]}
+               "spaceFlight": data[data.GSM_source_name_ch1.str.contains("microg", case=False) |
+                                    data.GSM_source_name_ch1.str.contains("µG", case=False) |
+                                    data.GSM_source_name_ch1.str.contains("space flight", case=False)]}
 
 # Download
 print("Downloading...")
