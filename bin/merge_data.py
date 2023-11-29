@@ -35,10 +35,13 @@ args = parser.parse_args()
 matrix = []
 for dir in os.listdir(args.indir):
     subdir = os.path.join(args.indir, dir)
+    print(f"Parsing {subdir} files...")
     if not os.path.isdir(subdir): continue
+    print("Parsing Agilent files...")
     tables = [parseAgilent(os.path.join(subdir,file)).rename(i) for i,file in enumerate(os.listdir(subdir))]
     matrix.append(pd.concat(tables, axis=1).mean(axis=1).rename(dir))
 
+print("Building output...")
 pd.concat(matrix, axis=1).to_csv(args.output, sep='\t')
-
+print("Done!")
 
