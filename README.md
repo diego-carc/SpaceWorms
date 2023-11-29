@@ -12,6 +12,8 @@ En particular, nos centraremos en el análisis de datos disponibles para el orga
 
 ## Método/Diseño/Análisis
 
+Todos los pasos de este análisis se realizaron en el servidor TEPEU de la Licenciatura en Ciencias Genómicas de la Universidad Nacional Autónoma de México.
+
 ### Colección de datos
 
 Hicimos el script get_geo_ids.py para hacer una búsqueda en la base de datos de GEO utilizando el módulo Entrez de Bio-Python. En el script, usamos la función Entrez.esearch buscando Series de GEO asociadas con microgravedad o vuelo espacial usando el siguiente término:
@@ -20,7 +22,7 @@ Hicimos el script get_geo_ids.py para hacer una búsqueda en la base de datos de
 
 En donde {taxid} se reemplaza por el taxid del organismo de interés. En este caso, usamos el taxid 6239, que corresponde C Elegans.
 
-python
+```python
 # Desde data/QueryData/
 # $bin es una variable que almacena el path hasta la carpeta bin
 nohup python $bin/get_geo_ids.py -e diegocar@lcg.unam.mx \
@@ -29,11 +31,11 @@ nohup python $bin/get_geo_ids.py -e diegocar@lcg.unam.mx \
 
 # El output se movió a cElegansSpaceGSEsIDs.out
 mv nohup.out cElegansSpaceGSEsIDs.out
+```
 
+Usamos el script *get_geo_metadata.py* para descargar y *parsear* los archivos soft asociados a los GSEs que consultamos. Obtuvimos los metadatos asociados a esas entradas y descargamos las tablas de los GPLs correspondientes.
 
-Usamos el script get_geo_metadata.py para descargar y parsear los archivos soft asociados a los GSEs que consultamos. Obtuvimos los metadatos asociados a esas entradas y descargamos las tablas de los GPLs correspondientes.
-
-python
+```python
 # Desde data/QueryData/
 # $bin es una variable que almacena la ruta hasta la carpeta bin
 # $PWD es una variable que almacena la ruta hasta el directorio actual
@@ -42,11 +44,11 @@ nohup python $bin/get_geo_metadata.py -i $PWD/cElegansSpaceGSEsIds.txt \
 
 # El output se movió a cElegansGEOMetadata.out
 mv nohup.out cElegansGEOMetadata.out
+```
 
+Usando el *script get_supplementary_files.py* filtramos los datos para quedarnos con los registros de Agilent con extensión .txt. Buscamos aquellos archivos que se obtuvieron con experimentos de un canal y los descargamos.
 
-Usando el script get_supplementary_files.py filtramos los datos para quedarnos con los registros de Agilent con extensión .txt. Buscamos aquellos archivos que se obtuvieron con experimentos de un canal y los descargamos.
-
-python
+```python
 # Desde data/RawData
 # $bin es una variable que almacena la ruta hasta la carpeta bin
 # $query es una variable que almacena la ruta hasta la carpeta data/QueryData
@@ -56,7 +58,7 @@ nohup python $bin/get_supplementary_files.py -i $query/cElegansGEOMetadata.tsv \
 
 # Movimos el output a cElegansDownload.out
 mv nohup.out cElegansDownload.out
-
+```
 
 El programa clasificó las entradas en 3 grupos con el siguiente número de registros:
 
@@ -66,9 +68,9 @@ El programa clasificó las entradas en 3 grupos con el siguiente número de regi
 
 ### Procesamiento de los datos
 
-Con el scrip merge_data.py parseamos lo archivos suplementarios que descargamos. Los replicados de cada condición se condensaron en una sola columna usando el promedio de la expresión de cada gen. Luego se unieron las columnas correspondientes a cada condición en una sola matriz que se guardó en un archivo.
+Con el scrip *merge_data.py* parseamos lo archivos suplementarios que descargamos. Los replicados de cada condición se condensaron en una sola columna usando el promedio de la expresión de cada gen. Luego se unieron las columnas correspondientes a cada condición en una sola matriz que se guardó en un archivo.
 
-python
+```python
 # Desde data/RawData
 # $bin es una variable que almacena la ruta hasta la carpeta bin
 # $PWD es una variable que almacena la ruta hasta el directorio actual
@@ -76,11 +78,11 @@ nohup python $bin/merge_data.py -i $PWD -o cElegansRawData.tsv &
 
 # El output se movió a cElegansDownload.out
 mv nohup.out cElegansMerging.out
+```
 
+Usamos la matriz generada por *merge_data.py* y aplicamos normalización por cuantiles. Este método tiene como objetivo hacer que todos los conjuntos de observaciones sigan una misma distribución para poder hacer comparaciones entre ellas.
 
-Usamos la matriz generada por merge_data.py y aplicamos normalización por cuantiles. Este método tiene como objetivo hacer que todos los conjuntos de observaciones sigan una misma distribución para poder hacer comparaciones entre ellas.
-
-python
+```python
 # Desde data/NormData
 # $bin es una variable que almacena la ruta hasta la carpeta bin
 # $raw es una variable que almacena la ruta hasta data/RawData
@@ -89,13 +91,13 @@ nohup python $bin/quantile_norm.py -i $raw/cElegansRawData.tsv -o cElegansNormDa
 
 # Se movió el output a cElegansNormalization.out
 mv nohup.out cElegansNormalization.out
-
+```
 
 ### Análisis de Datos
 
-Para comparar el perfil de expresión de C elegans en el espacio y en tierra, utilizamos los datos normalizados. Posteriormente filtramos los genes que estuvieran anotados según el GPL11346.txt. Para encontrar los genes diferencialmente expresados, calculamos la relación de expresión spaceFlight/groundControl y obtuvimos el logaritmo base 2 para encontrar cuántas veces se duplicaba la expresión. Usando un valor de corte 3 (los genes duplican su valor 3 veces en vuelo espacial) filtramos los resultados y los representamos en un heatmap.  
+Para comparar el perfil de expresión de C elegans en el espacio y en tierra, utilizamos los datos normalizados. Posteriormente filtramos los genes que estuvieran anotados según el GPL11346.txt. Para encontrar los genes diferencialmente expresados, calculamos la relación de expresión *spaceFlight/groundControl* y obtuvimos el logaritmo base 2 para encontrar cuántas veces se duplicaba la expresión. Usando un valor de corte 3 (los genes duplican su valor 3 veces en vuelo espacial) filtramos los resultados y los representamos en un heatmap.  
 
-python
+```python
 # Desde results/
 # $bin es una variable que almacena la ruta hasta la carpeta bin
 # $norm es una variable que almacena la ruta hasta data/NormData
@@ -105,7 +107,7 @@ nohup python $bin/make_heatmap.py -i $norm/cElegansNormData.tsv -g $query/GPL113
 
 # Se movió el output
 mv nohup.out cElegansHeatMap.out
-
+```
 
 ## Pregunta/Hipótesis/Objetivo
 
@@ -117,7 +119,7 @@ Con este trabajo pretendemos generar conocimiento acerca de los sistemas afectad
 
 ## Resultados
 
-El heatmap generado por make_heatmap.py es:
+El heatmap generado por *make_heatmap.py* es:
 
 ![Heatmap representando los genes que cambiaron notablemente su expresión](results/cElegansHeatMap.png)
 
@@ -133,8 +135,8 @@ Por supuesto, los datos generados por medio de estos análisis necesitan de vali
 
 ## Referencias
 
-Lisozima. (2023, August 25). Wikipedia, La Enciclopedia Libre.https://es.wikipedia.org/wiki/Lisozima
+*Lisozima*. (2023, August 25). Wikipedia, La Enciclopedia Libre.[https://es.wikipedia.org/wiki/Lisozima](https://es.wikipedia.org/wiki/Lisozima)
 
-Quantile normalization. (2023, February 9). Wikipedia.[https://en.wikipedia.org/wiki/Quantile_normalization(https://en.wikipedia.org/wiki/Quantile_normalization)
+*Quantile normalization*. (2023, February 9). Wikipedia.[https://en.wikipedia.org/wiki/Quantile_normalization(https://en.wikipedia.org/wiki/Quantile_normalization)
 
-[Lv Hongfang](https://royalsocietypublishing.org/author/Lv%2C+Hongfang), [Yang Huan](https://royalsocietypublishing.org/author/Yang%2C+Huan), [Jiang Chunmei](https://royalsocietypublishing.org/author/Jiang%2C+Chunmei), [Shi Junling](https://royalsocietypublishing.org/author/Shi%2C+Junling), [Chen Ren-an](https://royalsocietypublishing.org/author/Chen%2C+Ren-an), [Huang Qingsheng](https://royalsocietypublishing.org/author/Huang%2C+Qingsheng) and [Shao Dongyan](https://royalsocietypublishing.org/author/Shao%2C+Dongyan) 2023Microgravity and immune cells*J. R. Soc. Interface.**20*2022086920220869 [doi](https://doi.org/10.1098/rsif.2022.0869)
+[Lv Hongfang](https://royalsocietypublishing.org/author/Lv%2C+Hongfang), [Yang Huan](https://royalsocietypublishing.org/author/Yang%2C+Huan), [Jiang Chunmei](https://royalsocietypublishing.org/author/Jiang%2C+Chunmei), [Shi Junling](https://royalsocietypublishing.org/author/Shi%2C+Junling), [Chen Ren-an](https://royalsocietypublishing.org/author/Chen%2C+Ren-an), [Huang Qingsheng](https://royalsocietypublishing.org/author/Huang%2C+Qingsheng) and [Shao Dongyan](https://royalsocietypublishing.org/author/Shao%2C+Dongyan) 2023Microgravity and immune cells*J. R. Soc. Interface.***20**2022086920220869 [doi]([https://doi.org/10.1098/rsif.2022.0869](https://doi.org/10.1098/rsif.2022.0869))
