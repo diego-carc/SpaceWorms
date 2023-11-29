@@ -26,13 +26,17 @@ def get_GEO(gse_id:str, path:str, i:int, m:int, delete:bool=False, tries:int=10)
     print(f"Consulting {gse_id}: {i}/{m}")
     path = os.path.split(path)[0]
     try: 
-        try: gse = GEOparse.get_GEO(geo=gse_id, path=path, silent=True) 
+        try: gse = GEOparse.get_GEO(geo=gse_id, path=path, silent=True); print("GEO parse succesful") 
         except: 
+            print("Using ftp..")
             link = f'"ftp://ftp.ncbi.nlm.nih.gov/geo/series/{gse_id[:-3]}nnn/{gse_id}/soft/{gse_id}_family.soft.gz"'
             file = f"{gse_id}_family.soft.gz"
+            print("Downloading...")
             os.system(f" wget {link} -O {os.path.join(path, file)}")
+            print("Parsing...")
             gse = GEOparse.get_GEO(filepath=os.path.join(path, f"{gse_id}_family.soft.gz"), silent=True)
-        os.remove(os.path.join(path, f"{gse_id}_family.soft.gz"))
+            print("Deleting...")
+            os.remove(os.path.join(path, f"{gse_id}_family.soft.gz"))
     except: 
         if tries: return(get_GEO(gse_id, path, i, m, delete, tries-1))
         print(f"Error parsing {gse_id}") ; return(None)
@@ -92,8 +96,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input",help="Path to input file containing a list of GSEs GEO accession ids")
 parser.add_argument("-o", "--outfile", help="Path to file to print output file")
 parser.add_argument("-g", "--gpl", help="Wheter to save GPL table. Default: True", action="store_true")
-parser.add_argument("-d", "--delimiter", help="Character to use as delimiter in output table", default='\t')
-parser.add_argument("-r", "--remove", help="Wether to remove GSE_family.soft.files")
+parser.add_argument("-r", "--remove", help="Wether to remove GSE_family.soft.files", action="store_true")
 args = parser.parse_args()
 
 # Read GSE accession
@@ -112,10 +115,10 @@ metadata = [gseMeta(gse).getAllMeta() for gse in gses]
 # Print output
 print("Building output...")
 table = pd.concat(metadata)
-table.to_csv(args.outfile, sep=args.delimiter, index=False)
+table.to_csv(args.outfile, sep='\t', index=False)
 
 if args.gpl: 
-     gpls = {acc:gpl for gse in gses for acc, gpl in gse.gpl.items()}
+     gpls = {acc:gpl for gse in gses for acc, gpl in gse.gpls.items()}
      for acc, gpl in gpls.items():
           gpl.table.to_csv(os.path.join(os.path.split(args.outfile)[0], f"{acc}.txt"), sep='\t', index=False)
 
