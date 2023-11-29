@@ -24,7 +24,6 @@ def download(path, link, tries=10):
 # Parse args
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", help="Path to file with dataframe")
-parser.add_argument("-d", "--delimiter", help="Delimiter character used in input file")
 parser.add_argument("-m", "--manufacturer", help="Downloads files according to manufacturer", default=None)
 parser.add_argument("-f", "--filetype", help="File type to download", default=".txt")
 parser.add_argument("-n", "--n_channels", choices=[1, 2], help="Select number of channels in experiment", type=int, default=0)
@@ -33,7 +32,7 @@ args = parser.parse_args()
 
 # Read DataFrame
 print("Reading data...")
-data = pd.read_csv(args.input, sep=args.delimiter)
+data = pd.read_csv(args.input, sep='\t')
 
 # Select useful
 print("Filtering by file availability...")
