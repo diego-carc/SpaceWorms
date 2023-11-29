@@ -1,7 +1,32 @@
-"""
-Retrieves GEO metadata for a set of GSEs ids using GEOparse.
-Saves GPLs tables.
-"""
+'''
+NAME
+    get_geo_metadata.py
+  
+VERSION
+    1.0  28/11/2023
+
+
+AUTHOR
+    Diego Carmona Campos & Ethan Marcos Galindo Raya
+
+DESCRIPTION
+    The script recieves a file containing a list of GSEs accession numbers. Then, calls GEOparse 
+    to download and parse GSE_familu.soft files to extract metadata. The metadata is stored in a
+    tabular format.
+    Optionally, the program also saves the GPL files.
+    
+
+USAGE
+
+    % python get_geo_metadata.py -i [Path to file with GSMs list] -o [Path to file to print outpu] -g [Save GPL files] -r [Remove GSE_family.soft files]
+    
+ARGUMENTS
+    --input: Path to file with GSEs lists
+    --outfile: Path to file to print metadata in tabular format
+    --gpl: Saves GPLs tables
+    --remove: Delete GSE_familt.soft files
+'''
+
 # Import modules
 import GEOparse
 import pandas as pd

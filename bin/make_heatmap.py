@@ -1,7 +1,36 @@
-"""
-Makes a heatmap to compare expression of genes
-The spaceFlight/groundControl ratio is transformed to log2
-"""
+'''
+NAME
+    quantile_norm.py
+  
+VERSION
+    1.0  28/11/2023
+
+
+AUTHOR
+    Diego Carmona Campos & Ethan Marcos Galindo Raya
+
+DESCRIPTION
+    Recieves a matrix as given by merge_data.py or quantile_norm.py, and the GPL file to
+    map the ProbeNames to the gene names. Then, filters the data to select only annotated genes.
+    The script uses the groundControl and spaceFlight columns to identify the differentially expressed genes, calculating
+    the log2 of the spaceFlight/groundControl ratio. The differentially expressed genes are represented in a heatmap.
+
+USAGE
+
+    % python merge_data.py -i [Path to file with data from merge_data.py | quantile_norm.py] -g [Path to GPL table] -a [Number of times a gene expression is twofold of the control]
+    -w [Width of the image] -e [Height of the image] -o [Path to save heatmap]
+    
+ARGUMENTS
+    --input: Path to directory with subdirectories to merge data
+    --gpl: Path to file with GPL table
+    --alpha: Value to cut differential expressed genes. The number of times spaceFlight expression doubles control
+    --width: Width of the heatmap. Def: 8
+    --height: Height of the heatmap. Def: 8
+    --output: Path to file to save heatmap
+
+SEE ALSO
+https://en.wikipedia.org/wiki/Quantile_normalization
+'''
 
 # Import modules 
 import pandas as pd

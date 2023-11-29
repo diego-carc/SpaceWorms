@@ -1,9 +1,30 @@
-"""
-Recieves a dataframe as given by get_geo_metadata.py and downloads
-the supplementary files using the GSM_supplementary_file values 
-Optional:
-    Applies filters acording to manufacturer 
-"""
+'''
+NAME
+    get_supplementary_files.py
+  
+VERSION
+    1.0  28/11/2023
+
+
+AUTHOR
+    Diego Carmona Campos & Ethan Marcos Galindo Raya
+
+DESCRIPTION
+    Recieves the output from get_geo_metadata.py and uses de metadata to filter useful GSMs.
+    Then, classifies the GSMs according to its source and dowload de supplementary files. 
+
+USAGE
+
+    % python get_supplementary_files.py -i [Path to file given by get_geo_metadata.py] -m [Manufacturer to filter (Optional)]
+    -f [File extension to filter (Def: txt)] -n [Number of channels to fiter [1,2] (Optional)] -o [Path to directory to download files] 
+    
+ARGUMENTS
+    --input: Path to file with dataframe from get_geo_metadata.py
+    --manufacturer: Downloads files according to manufacturer
+    --filetype: File type to download (Default: .txt)
+    --n_channels: Number of channels in the experiment [1|2] (Optional)
+    --outdir: Path to directory to store files
+'''
 
 # Import modules
 import pandas as pd
@@ -23,7 +44,7 @@ def download(path, link, tries=10):
 
 # Parse args
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input", help="Path to file with dataframe")
+parser.add_argument("-i", "--input", help="Path to file with dataframe from get_geo_metadata.py")
 parser.add_argument("-m", "--manufacturer", help="Downloads files according to manufacturer", default=None)
 parser.add_argument("-f", "--filetype", help="File type to download", default=".txt")
 parser.add_argument("-n", "--n_channels", choices=[1, 2], help="Select number of channels in experiment", type=int, default=0)

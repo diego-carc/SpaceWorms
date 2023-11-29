@@ -1,8 +1,29 @@
-"""
-Merges Agilent TXT data from multiple directories. Each directory must contain multiple Agilent TXT files.
-Then, for each directory, the data is reduced to the mean across the datasets and stored in a single table.
-The tables generated are then merged and saved in a single matrix.
-"""
+'''
+NAME
+    merge_data.py
+  
+VERSION
+    1.0  28/11/2023
+
+
+AUTHOR
+    Diego Carmona Campos & Ethan Marcos Galindo Raya
+
+DESCRIPTION
+    Recieves a path to a directory containing the subdirectories created by get_supplementary_files.py.
+    Iterates over all the .txt files, and parse asuming they are from Agilent Technologies. The script
+    parse the files and calculate the mean over a set of observations (files in a subdirectory). Then, 
+    the datasetes from the subdirectories is merged in a single file. 
+
+USAGE
+
+    % python merge_data.py -i [Path to directory used to store the ouput od get_supplementary_files] 
+    -o [Path to file to print output]
+    
+ARGUMENTS
+    --indir: Path to directory with subdirectories to merge data
+    --output: Path to file to print output
+'''
 
 # Import modules
 import pandas as pd

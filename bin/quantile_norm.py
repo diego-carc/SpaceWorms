@@ -1,6 +1,30 @@
-"""
-Applies quantile normalization to a tabular data set obtained from merge_data.py
-"""
+'''
+NAME
+    quantile_norm.py
+  
+VERSION
+    1.0  28/11/2023
+
+
+AUTHOR
+    Diego Carmona Campos & Ethan Marcos Galindo Raya
+
+DESCRIPTION
+    Recieves a matrix as given by merge_data.py and applies quantile normalization algorithm
+    to normalize data.
+
+USAGE
+
+    % python merge_data.py -i [Path to file given by merge_data.py] 
+    -o [Path to file to print output]
+    
+ARGUMENTS
+    --input: Path to directory with subdirectories to merge data
+    --output: Path to file to print output
+
+SEE ALSO
+https://en.wikipedia.org/wiki/Quantile_normalization
+'''
 # Import modules
 import pandas as pd
 import argparse
