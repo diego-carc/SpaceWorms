@@ -1,5 +1,6 @@
 """
 Retrieves GEO metadata for a set of GSEs ids using GEOparse.
+Saves GPLs tables.
 """
 # Import modules
 import GEOparse
@@ -89,7 +90,8 @@ class gseMeta:
 # Parse args
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input",help="Path to input file containing a list of GSEs GEO accession ids")
-parser.add_argument("-o", "--outfile", help="Path to print output file")
+parser.add_argument("-o", "--outfile", help="Path to file to print output file")
+parser.add_argument("-g", "--gpl", help="Wheter to save GPL table. Default: True", action="store_true")
 parser.add_argument("-d", "--delimiter", help="Character to use as delimiter in output table", default='\t')
 parser.add_argument("-r", "--remove", help="Wether to remove GSE_family.soft.files")
 args = parser.parse_args()
@@ -109,6 +111,12 @@ metadata = [gseMeta(gse).getAllMeta() for gse in gses]
 
 # Print output
 print("Building output...")
-pd.concat(metadata).to_csv(args.outfile, sep=args.delimiter, index=False)
+table = pd.concat(metadata)
+table.to_csv(args.outfile, sep=args.delimiter, index=False)
+
+if args.gpl: 
+     gpls = {acc:gpl for gse in gses for acc, gpl in gse.gpl.items()}
+     for acc, gpl in gpls.items():
+          gpl.table.to_csv(os.path.join(os.path.split(args.outfile)[0], f"{acc}.txt"), sep='\t', index=False)
 
 print("Done!")
