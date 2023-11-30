@@ -118,6 +118,7 @@ Nosotros creemos que habrá una gran variedad de funciones afectadas por la micr
 Con este trabajo pretendemos generar conocimiento acerca de los sistemas afectados por el vuelo espacial usando como modelo a C. elegans.
 
 ## Resultados
+Todos los resultados pueden encontrarse en [nuestro repositorio de github](https://github.com/diego-carc/SpaceWorms.git)
 
 El heatmap generado por *make_heatmap.py* es:
 
